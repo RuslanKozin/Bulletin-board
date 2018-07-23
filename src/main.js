@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import Vuetify from 'vuetify'
+import * as fb from 'firebase'  // импортировать все, как переменную fb из библиотеки firebase
 import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify)
@@ -17,5 +18,15 @@ new Vue({
   router,
   store,
   components: { App },
-  template: '<App/>'   // template рендерит components: { App }
+  template: '<App/>',   // template рендерит components: { App }
+  created () {  // created - жизненный цикл для инициализации компонента
+    fb.initializeApp({
+      apiKey: 'AIzaSyD5mgcTCPSiTxPfmTmBmPFWZU7GdR9l1BQ',
+      authDomain: 'itc-ads.firebaseapp.com',
+      databaseURL: 'https://itc-ads.firebaseio.com',
+      projectId: 'itc-ads',
+      storageBucket: 'itc-ads.appspot.com',
+      messagingSenderId: '145551978680'
+    })
+  }
 })

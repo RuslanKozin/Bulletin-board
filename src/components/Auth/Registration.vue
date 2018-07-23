@@ -46,7 +46,8 @@
                 <v-btn 
                   color="primary"
                   @click="onSubmit"
-                  :disabled="!valid"
+                  :loading="loading"
+                  :disabled="!valid || loading"
                 >Зарегистрироваться</v-btn>
               </v-card-actions>
             </v-card>
@@ -79,6 +80,11 @@ export default {
       ]
     }
   },
+  computed: {
+    loading () {  // Достает значение state по loading'у
+      return this.$store.getters.loading
+    }
+  },
   methods: {
     onSubmit () { // Логика для кнопки отправки данных формы
       if (this.$refs.form.validate()) { // Обращаемся к локальной референции form - она есть в нашей форме 'ref="form"' (если форма валидированна)
@@ -86,6 +92,14 @@ export default {
           email: this.email,
           password: this.password
         }
+          // Обработка регистрации пользователя
+        this.$store.dispatch('registerUser', user)
+        .then(() => {
+          this.$router.push('/')  // Переходим на главную страницу после регистрации пользователя
+        })
+        .catch(err => console.log(err))
+
+        // В методе dispatch получаем ответ promise, поэтому можем обратиться к нему через метод then или через метод catch
       }
     }
   }
