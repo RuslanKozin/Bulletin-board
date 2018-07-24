@@ -38,7 +38,8 @@
                 <v-btn 
                   color="primary"
                   @click="onSubmit"
-                  :disabled="!valid"
+                  :loading="loading"
+                  :disabled="!valid || loading"
                 >Войти</v-btn>
                   <!-- :disabled="!valid" - блокировать кнопку если форма не валидна -->
               </v-card-actions>
@@ -65,6 +66,11 @@ export default {
       ]
     }
   },
+  computed: {
+    loading () {  // Достает значение state по loading'у
+      return this.$store.getters.loading
+    }
+  },
   methods: {
     onSubmit () { // Логика для кнопки отправки данных формы
       if (this.$refs.form.validate()) { // Обращаемся к локальной референции form - она есть в нашей форме 'ref="form"' (если форма валидированна)
@@ -72,7 +78,12 @@ export default {
           email: this.email,
           password: this.password
         }
-        console.log(user)
+          // Обработка логина пользователя
+        this.$store.dispatch('loginUser', user)   // Вызываем у store метод dispatch/login с объектом user
+          .then(() => {
+            this.$router.push('/')  // Переходим на главную страницу после успешного входа(логина) пользователя
+          })
+          .catch(err => console.log(err))
       }
     }
   }
