@@ -28,5 +28,11 @@ new Vue({
       storageBucket: 'itc-ads.appspot.com',
       messagingSenderId: '145551978680'
     })
+      // Сохранение авторизации пользователя после перезагрузки стр.
+    fb.auth().onAuthStateChanged(user => {
+      if (user) {   // Если в перем. user что-то хранится, т.е. там не null
+        this.$store.dispatch('autoLoginUser', user)  // Пользователь будет автоматически залогинен
+      }
+    })
   }
 })

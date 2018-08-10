@@ -62,12 +62,24 @@ export default {
         commit('setError', error.message)
         throw error
       }
+    },
+      // Сохранение авторизации пользователя после перезагрузки стр.
+    autoLoginUser ({commit}, payload) {
+      commit('setUser', new User(payload.uid))
+    },
+      // Выход пользователя
+    logoutUser ({commit}) {
+      fb.auth().signOut()   // Выход
+      commit('setUser', null)   // Установка пользователя на ноль
     }
   },
   getters: {  // Сущность getters нужны для вычисления чего-либо.
     // Внутри getters находятся функции, которые что-то возвращают после вычисления, а в качестве параметра эти функции принимают сам state.
     user (state) {
       return state.user // Возвращаем нашего юзера
+    },
+    isUserLoggedIn (state) {
+      return state.user !== null  // Если в state user не равняется нулю, то user уже зарегистрирован
     }
   }
 }

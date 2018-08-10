@@ -23,6 +23,18 @@
               <v-list-tile-title v-text="link.title"></v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
+
+          <v-list-tile
+            v-if="isUserLoggedIn"
+            @click="onLogout"
+          >
+            <v-list-tile-action>
+              <v-icon>exit_to_app</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title v-text="'Выход'"></v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
         </v-list>
       </v-navigation-drawer>   <!-- всплывающая менюшка, слева -->
     
@@ -53,6 +65,14 @@
             bug_report - если название иконка состоит из двух и более слов, то пишем через '_' -->
           {{link.title}}
         </v-btn>
+        <v-btn
+          @click="onLogout"
+          flat
+          v-if="isUserLoggedIn"
+        >
+          <v-icon left>exit_to_app</v-icon>
+          Выход
+        </v-btn>
       </v-toolbar-items>    <!-- навигационные ссылки -->
     </v-toolbar>    <!-- вверхняя часть нашего приложения -->
 
@@ -61,7 +81,7 @@
         <router-view></router-view>
 
     </v-content>
-
+    
       <!-- https://vuetifyjs.com/ru/components/snackbars -->
     <template v-if="error"> <!-- Показывать данный snackbar при ошибке -->
       <v-snackbar
@@ -88,17 +108,32 @@ export default {
   computed: {
     error () {
       return this.$store.getters.error
-    }
+    },
+    isUserLoggedIn () {
+      return this.$store.getters.isUserLoggedIn
+    },
+      // Изменяем меня в зависимости от переменной isUserLoggedIn
+    links () {
+      if (this.isUserLoggedIn) {
+        return [  // Если пользователь залогинен, вызываем один массив
           {title: 'Заказы', icon: 'bookmark_border', url: '/orders'},
           {title: 'Добавить', icon: 'note_add', url: '/new'},
           {title: 'Список объявлений', icon: 'list', url: '/list'}
         ]
       }
+      return [  // Если пользователь не залогинен
+        {title: 'Войти', icon: 'lock', url: '/login'},
+        {title: 'Регистрация', icon: 'face', url: '/registration'}
+      ]
     }
   },
   methods: {
     closeError () {
       this.$store.dispatch('clearError')  // При закрытии snackbar'а очищаем ошибку
+    },
+    onLogout () {
+      this.$store.dispatch('logoutUser')
+      this.$router.push('/')  // Вернуться на главную страницу после выхода
     }
   }
 }
