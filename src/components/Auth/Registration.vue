@@ -97,7 +97,7 @@ export default {
         .then(() => {
           this.$router.push('/')  // Переходим на главную страницу после регистрации пользователя
         })
-        .catch(err => console.log(err))
+        .catch(() => {})
 
         // В методе dispatch получаем ответ promise, поэтому можем обратиться к нему через метод then или через метод catch
       }

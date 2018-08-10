@@ -83,7 +83,7 @@ export default {
           .then(() => {
             this.$router.push('/')  // Переходим на главную страницу после успешного входа(логина) пользователя
           })
-          .catch(err => console.log(err))
+          .catch(() => {})
       }
     }
   }

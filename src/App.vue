@@ -61,6 +61,20 @@
         <router-view></router-view>
 
     </v-content>
+
+      <!-- https://vuetifyjs.com/ru/components/snackbars -->
+    <template v-if="error"> <!-- Показывать данный snackbar при ошибке -->
+      <v-snackbar
+        :timeout="5000"
+        :multi-line="true"
+        color="error"
+        @input="closeError"
+        :value="true"
+      >
+        {{error}}
+        <v-btn flat dark @click.native="closeError">Закрыть</v-btn>
+      </v-snackbar>
+    </template>
   </v-app>
 </template>
 
@@ -68,14 +82,23 @@
 export default {
   data () {
     return {
-      drawer: false, // По умолчанию дровер/левое меня не видно
-      links: [  // Ссылки для меню. Массив состоит из объектов
-        {title: 'Войти', icon: 'lock', url: '/login'},
-        {title: 'Регистрация', icon: 'face', url: '/registration'},
-        {title: 'Заказы', icon: 'bookmark_border', url: '/orders'},
-        {title: 'Добавить', icon: 'note_add', url: '/new'},
-        {title: 'Список объявлений', icon: 'list', url: '/list'}
-      ]
+      drawer: false // По умолчанию дровер/левое меня не видно
+    }
+  },
+  computed: {
+    error () {
+      return this.$store.getters.error
+    }
+          {title: 'Заказы', icon: 'bookmark_border', url: '/orders'},
+          {title: 'Добавить', icon: 'note_add', url: '/new'},
+          {title: 'Список объявлений', icon: 'list', url: '/list'}
+        ]
+      }
+    }
+  },
+  methods: {
+    closeError () {
+      this.$store.dispatch('clearError')  // При закрытии snackbar'а очищаем ошибку
     }
   }
 }
