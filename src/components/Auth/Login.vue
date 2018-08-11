@@ -86,6 +86,11 @@ export default {
           .catch(() => {})
       }
     }
+  },
+  created () {
+    if (this.$route.query['loginError']) { // Если у текущего роута есть параметр loginError
+      this.$store.dispatch('setError', 'Пожалуйста, авторизуйтесь, чтобы получить доступ к этой странице')
+    }
   }
 }
 </script>
