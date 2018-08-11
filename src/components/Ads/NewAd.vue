@@ -59,7 +59,8 @@
           <v-flex xs12>
             <v-spacer></v-spacer>
             <v-btn
-              :disabled="!valid"
+              :loading="loading"
+              :disabled="!valid || loading"
               class="success" 
               @click="createAd"
             >Добавить</v-btn>
@@ -81,6 +82,11 @@ export default {
       valid: false
     }
   },
+  computed: {
+    loading () {  // Состояние приложения
+      return this.$store.getters.loading
+    }
+  },
   methods: {
     createAd () {
       if (this.$refs.form.validate()) { // Если форма валидна
@@ -91,6 +97,10 @@ export default {
         }
 
         this.$store.dispatch('createAd', ad)
+          .then(() => {    // Коллбэк
+            this.$router.push('/list')  // Обращаемся к роуту и переходим на страницу list(список объявлений) после создания нового поста
+          })
+          .catch(() => {})
       }
     }
   }
