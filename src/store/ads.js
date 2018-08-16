@@ -14,33 +14,14 @@ class Ad {
 
 export default {
   state: {  // Состояние приложения
-    ads: [
-      {
-        title: 'First ad',
-        description: 'Hello i am description',
-        promo: false,
-        imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-        id: '123'
-      },
-      {
-        title: 'Second ad',
-        description: 'Hello i am description',
-        promo: true,
-        imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-        id: '1234'
-      },
-      {
-        title: 'Third ad',
-        description: 'Hello i am description',
-        promo: true,
-        imageSrc: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-        id: '12345'
-      }
-    ]
+    ads: []
   },
   mutations: {  // mutations - setters - Сущность mutations позволяет мутировать/изменять что-либо.
     createAd (state, payload) {
       state.ads.push(payload) // С помощью push(добавляем новый payload)
+    },
+    loadAds (state, payload) {  // В данную мутацию передаем массив готовых объявлений (загрузка с сервера)
+      state.ads = payload   // Обращаемся к state.ads и говорим, что он будет равняться новому payload'у
     }
   },
   actions: {  // Сущность actions нужны для работы с асинхронными действиями (серверами)
@@ -76,6 +57,35 @@ export default {
       }
 
       // commit('createAd', payload) // createAd - мутация
+    },
+
+      // Получение постов из базы данных
+    async fetchAds ({commit}) {
+      commit('clearError')  // Очищаем ошибки, если они есть
+      commit('setLoading', true)
+
+      const resultAds = []  // Данный массив заполняется всеми объявлениями из базы данных
+
+      try {
+        const fbVal = await fb.database().ref('ads').once('value')  // Обращаемся к база данных и ее таблице ads
+          // Метод once забираем все данные
+        const ads = fbVal.val()   // Метод val позволяет получить нужные данные из объекта fbVal
+
+        Object.keys(ads).forEach(key => {   // Пробегаем по ключам объекта ads и на каждой итерации будем получать новый объект key, который будет являться нужным id-шником нужного нам объявления
+          const ad = ads[key]   // В переменной ad хранятся данные, относящиеся к выбранному по id объявлению
+          resultAds.push(   // Добавляем новый элемент рекламы
+            new Ad(ad.title, ad.description, ad.ownerId, ad.imageSrc, ad.promo, key)
+              // key - является id-шником нужного нам объявления
+          )
+        })
+
+        commit('loadAds', resultAds)
+        commit('setLoading', false)
+      } catch (error) {
+        commit('setError', error.message)
+        commit('setLoading', false)
+        throw error
+      }
     }
   },
   getters: {  // Сущность getters нужны для вычисления чего-либо.

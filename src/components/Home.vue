@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!loading">   <!-- Если нет загрузки данных с сервера, то показываем данные существующие на данный момент -->
     <v-container fluid> <!-- fluid - не добавляет дополнительных отступов -->
       <v-layout row>	<!-- row - выравнивает по строке -->
         <v-flex xs12> <!-- xs12 - всегда растягивает на всю ширину -->
@@ -54,7 +54,20 @@
         </v-flex>
       </v-layout>
     </v-container>
-  </div> 
+  </div>
+  <div v-else>
+    <v-layout row>
+      <v-flex xs12 class="text-xs-center pt-5">
+          <!-- https://vuetifyjs.com/ru/components/progress -->
+        <v-progress-circular
+          :size="100"
+          :width="4"
+          color="purple"
+          indeterminate
+        ></v-progress-circular>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -65,6 +78,9 @@ export default {
     },
     ads () {
       return this.$store.getters.ads
+    },
+    loading () {  // Проверяем состояние приложения (загрузка данных)
+      return this.$store.getters.loading
     }
   }
 }

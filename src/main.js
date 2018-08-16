@@ -34,5 +34,7 @@ new Vue({
         this.$store.dispatch('autoLoginUser', user)  // Пользователь будет автоматически залогинен
       }
     })
+
+    this.$store.dispatch('fetchAds')  // Загрузка данных из базы данных
   }
 })
